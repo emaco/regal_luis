@@ -1,36 +1,37 @@
 # regal_luis -- Landing page
 
-Pagina de aterrizaje para avisar a Luis de que su regalo esta en camino y,
-mientras tanto, invitarle a jugar. Estilo tipo Dark Souls: negro calido,
-vineta pesada, brasas flotando, serif de capital romana (Cinzel) y acento
-dorado (heredado del juego en `game/`).
+Landing page telling Luis his present is on the way and inviting him to play
+the game meanwhile. Dark Souls styling: warm near-black background, heavy
+vignette, drifting embers, Roman-capital serif (Cinzel), and a gold accent
+carried over from the game in `game/`.
 
-(Nota: este README quedo en codificacion UTF-16 y se mantiene sin tildes a
-proposito. El resto de archivos son UTF-8 y muestran los acentos bien.)
+(Note: this README stayed in UTF-16 encoding, so it uses plain ASCII. The
+other files are UTF-8 and render accents correctly. The page copy itself is
+in Spanish on purpose, for Luis.)
 
-## Archivos
+## Files
 
-| Archivo         | Que es                                                           |
-| --------------- | ---------------------------------------------------------------- |
-| `index.html`    | Pantalla "Regalo en proceso / mientras tanto..." + boton Empezar.|
-| `styles.css`    | Estilo Dark Souls (banner tipo "YOU DIED", prompt de menu).      |
-| `src/main.ts`   | Brasas en canvas. FUENTE TypeScript.                             |
-| `js/main.js`    | Version compilada de las brasas (la que carga la pagina).        |
-| `tsconfig.json` | Configuracion de TypeScript.                                     |
-| `game.html`     | Redireccion a `game/index.html` (el juego real).                 |
-| `game/`         | El juego (lo mantiene el otro colaborador; vive en `main`).      |
+| File            | What it is                                                        |
+| --------------- | ----------------------------------------------------------------- |
+| `index.html`    | Main screen: "Regalo en proceso / mientras tanto..." + Empezar button. |
+| `styles.css`    | Dark Souls styling (YOU DIED-style title, menu-selection button). |
+| `src/main.ts`   | Ember particle canvas. TypeScript source.                         |
+| `js/main.js`    | Compiled embers (the file the page loads).                        |
+| `tsconfig.json` | TypeScript config.                                                |
+| `game.html`     | Redirect to `game/index.html` (the real game).                    |
+| `game/`         | The game (maintained by the other collaborator; lives on `main`). |
 
-El boton **Empezar** enlaza a `game/index.html`, asi que la landing y el
-juego conviven en el sitio publicado cuando se fusionan las ramas.
+The **Empezar** button links to `game/index.html`, so the landing page and the
+game sit side by side in the published site once the branches are merged.
 
-## Desarrollo
+## Development
 
-La pagina funciona abriendo `index.html` directamente, sin servidor.
-Si editas el TypeScript de las brasas, recompila:
+Open `index.html` in a browser -- no server or build step needed.
+If you edit the ember TypeScript, recompile:
 
-    npx tsc        # usa tsconfig.json -> genera js/main.js
+    npx tsc        # uses tsconfig.json -> generates js/main.js
 
-## Publicacion (GitHub Pages)
+## Publishing (GitHub Pages)
 
-Rutas relativas: sirve desde la raiz del repo
-(Settings -> Pages -> rama y carpeta `/`).
+All paths are relative: serve from the repo root
+(Settings -> Pages -> branch and folder `/`).
