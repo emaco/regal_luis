@@ -244,6 +244,7 @@
     BB.setScene(e);
     await BB.dialog.say(lines);
     const c = new CreditsScene();
+    BB.music.play(MUSIC.battle, { volume: 0.6 }); // pumpkin cowboy en los créditos
     BB.setScene(c);
     await c.done;
   }
