@@ -116,8 +116,18 @@
     draw() {
       BB.rect(0, 0, W, H, C.black);
       const k = Math.min(1, this.t / 0.5);
+      // Mitad superior naranja (pumpkin). Mitad inferior: un color por jefe,
+      // elegido para que su sprite se vea bien contra el fondo.
+      const bottomByBoss = {
+        soul: C.blue,       // gato negro -> fondo claro
+        cucaracha: C.green, // cucaracha marron -> verde
+        masymas: C.purple,  // puerta cian -> morado
+        kira: C.dblue,      // border collie b/n -> azul medio
+        radahn: C.forest,   // radahn naranja/rojo -> verde oscuro
+      };
+      const bottom = bottomByBoss[this.def.id] || C.darkred;
       BB.rect(0, 0, W * k, H / 2, C.orange);
-      BB.rect(W - W * k, H / 2, W * k, H / 2, C.darkred);
+      BB.rect(W - W * k, H / 2, W * k, H / 2, bottom);
       BB.sprite("pumpkin-96", 70, H / 2 - 4, { anchor: "bottom" });
       BB.text("PUMPKIN COWBOY", 20, 20, { size: 8, color: C.black });
       BB.text("VS", W / 2, H / 2 - 10, { size: 20, align: "center", color: C.white, shadow: C.black });
