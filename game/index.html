@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>The Bianca Game</title>
+  <meta name="description" content="Una aventura de texto sobre conseguir una pizza Bianca a tiempo." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="stage" aria-live="polite">
+    <img id="bg-blur" alt="" aria-hidden="true" />
+    <img id="bg" alt="" />
+
+    <button id="mute" type="button" aria-label="Silenciar">🔊</button>
+
+    <div id="options" hidden></div>
+
+    <section id="dialog" hidden>
+      <p id="text"></p>
+      <div id="hint">toca o pulsa espacio para continuar</div>
+    </section>
+  </main>
+
+  <div id="title-screen" class="screen">
+    <h2>The Bianca Game</h2>
+    <h1 id="title-text"></h1>
+    <div class="cta">toca para empezar</div>
+  </div>
+
+  <div id="end-screen" class="screen" hidden>
+    <h2>Fin</h2>
+    <p id="end-text"></p>
+    <button id="restart" class="primary" type="button">Volver a empezar</button>
+  </div>
+
+  <script src="story.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
