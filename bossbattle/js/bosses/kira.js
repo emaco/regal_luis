@@ -127,7 +127,7 @@
     id: "kira",
     title: "KIRA",
     subtitle: "la border collie que siempre va suelta",
-    intro: ["Sales del Masymas. Soul vuelve a estar fuera de casa.", "Soul se dirige a la izquierda..."],
+    intro: ["Sales del Masymas.", "Al volver por el parque..."],
     win: ["Kira se cansa, te lame la cara y se va corriendo por donde ha venido.", "Pero sigues en el yermo."],
     lose: ["Kira te pastorea hasta el fin del mundo. Te quedas sin Bianca."],
     make: () => new KiraScene(),
