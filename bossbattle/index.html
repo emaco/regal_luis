@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <title>Pumpkin Cowboy: Boss Battle</title>
+  <meta name="description" content="Pumpkin Cowboy se enfrenta a los villanos de The Bianca Game en una serie de combates 2D." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="wrap">
+    <canvas id="game" width="384" height="216"></canvas>
+    <input id="word" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="12" placeholder="respuesta" hidden />
+    <button id="mute" type="button" aria-label="Silenciar">🔊</button>
+    <div id="loading">cargando...</div>
+    <div id="rotate">gira el móvil<br />para jugar</div>
+  </div>
+
+  <script src="js/engine.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/bosses/soul.js"></script>
+  <script src="js/bosses/cucaracha.js"></script>
+  <script src="js/bosses/masymas.js"></script>
+  <script src="js/bosses/kira.js"></script>
+  <script src="js/bosses/radahn.js"></script>
+  <script src="js/bosses/crucigrama.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
