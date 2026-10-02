@@ -51,7 +51,7 @@
     }
 
     async start() {
-      const i = await BB.dialog.ask("¿Qué build quieres usar?", ["Escudo con pincho (lento, bloquea 1 golpe)", "Pata de carnero (rápido)"]);
+      const i = await BB.dialog.ask("¿Qué build quieres usar?", ["Escudo con pincho: lento, bloquea 1", "Pata de carnero: rápido"]);
       this.build = i === 0 ? "escudo" : "carnero";
       BB.state.flags.build = this.build;
       this.speed = this.build === "escudo" ? 95 : 150;

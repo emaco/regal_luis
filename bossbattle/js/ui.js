@@ -100,8 +100,10 @@
 
     choiceBox() {
       const n = this.choices ? this.choices.length : 0;
-      const w = 150;
-      const h = n * 12 + 10;
+      let longest = 0;
+      for (const c of this.choices || []) longest = Math.max(longest, BB.measure(c, 8));
+      const w = Math.min(W - 12, Math.ceil(longest) + 30);
+      const h = n * 14 + 10;
       return { x: W - w - 6, y: H - BOX_H - h - 4, w, h };
     },
 
@@ -109,7 +111,7 @@
       if (!this.choices) return -1;
       const b = this.choiceBox();
       if (px < b.x || px > b.x + b.w || py < b.y || py > b.y + b.h) return -1;
-      const i = Math.floor((py - b.y - 5) / 12);
+      const i = Math.floor((py - b.y - 5) / 14);
       return i >= 0 && i < this.choices.length ? i : -1;
     },
 
@@ -134,9 +136,9 @@
         const b = this.choiceBox();
         BB.frame(b.x, b.y, b.w, b.h);
         this.choices.forEach((opt, i) => {
-          const yy = b.y + 6 + i * 12;
-          if (i === this.choice) BB.text(">", b.x + 6, yy);
-          BB.text(opt, b.x + 16, yy, { size: 7 });
+          const yy = b.y + 6 + i * 14;
+          if (i === this.choice) BB.text(">", b.x + 8, yy);
+          BB.text(opt, b.x + 20, yy, { size: 8 });
         });
       }
     },
