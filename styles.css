@@ -201,6 +201,33 @@ body {
 
 .prompt:active { transform: translateY(1px); }
 
+/* Enlace semioculto: letra pequena fijada abajo, como el texto
+   de recoger objeto en Dark Souls. Discreto, no compite con Empezar. */
+.secret {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+  transform: translateX(-50%);
+  z-index: 3;
+  text-align: center;
+  white-space: nowrap;
+  font-family: var(--garamond);
+  font-style: italic;
+  font-size: clamp(12px, 2.6vw, 15px);
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: rgba(215, 198, 163, 0.3);
+  transition: color 0.3s ease, text-shadow 0.3s ease, letter-spacing 0.3s ease;
+}
+
+.secret:hover,
+.secret:focus-visible {
+  color: var(--gold-bright);
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 16px rgba(255, 122, 46, 0.55);
+  outline: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .prompt,
   .prompt::before,
