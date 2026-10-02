@@ -41,7 +41,7 @@
     },
   };
   const MUSIC = {
-    calm: "assets/audio/pizza-tune.mp3",
+    calm: "assets/audio/disco-snails.mp3",
     battle: "assets/audio/pumpkin-cowboy.mp3",
   };
   const ORDER = ["soul", "cucaracha", "masymas", "kira", "radahn"];
