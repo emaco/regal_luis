@@ -212,7 +212,7 @@
 
     for (;;) {
       const scene = def.make();
-      BB.music.play(MUSIC.battle, { volume: 0.45 });
+      BB.music.play(MUSIC.calm, { volume: 0.35 });
       BB.setScene(scene);
       const win = await scene.result;
       if (win) {
