@@ -56,7 +56,7 @@
       if (Math.random() < dt * 0.6) s.baseY = BB.clamp(s.baseY + BB.rand(-40, 40), 40, H - 40);
 
       const p = BB.input.pointer;
-      if (p.justDown && BB.dist(p.x, p.y, s.x, s.y) < 20) {
+      if (p.justDown && BB.dist(p.x, p.y, s.x, s.y) < 26) {
         this.catchSoul();
         return;
       }
