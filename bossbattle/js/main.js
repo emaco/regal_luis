@@ -160,7 +160,9 @@
 
   class CreditsScene {
     constructor() {
-      this.t = 0;
+      this.t = 0; // posicion del scroll (en segundos de scroll normal)
+      this.real = 0;
+      this.rate = 1; // multiplicador de velocidad (sube mientras mantienes pulsado)
       this.done = new Promise((r) => (this.resolve = r));
       this.lines = [
         "PUMPKIN COWBOY: BOSS BATTLE",
@@ -184,10 +186,17 @@
         "",
         "toca para volver al título",
       ];
+      // Fin del scroll: el leon ya ha salido por arriba.
+      this.end = (H + this.lines.length * 14 + 20 + 32) / 18;
     }
     update(dt) {
-      this.t += dt;
-      if (this.t > 1.5 && BB.input.advance) this.resolve();
+      this.real += dt;
+      const inp = BB.input;
+      const held = this.real > 1 && (inp.pointer.down || inp.key("Space") || inp.key("Enter"));
+      this.rate = held ? Math.min(12, this.rate + 20 * dt) : Math.max(1, this.rate - 30 * dt);
+      this.t = Math.min(this.end, this.t + dt * this.rate);
+      // Al llegar al final (acelerando o no) un clic/pulsacion termina los creditos.
+      if (this.t >= this.end && (held || (this.real > 1.5 && inp.advance))) this.resolve();
     }
     draw() {
       BB.rect(0, 0, W, H, C.black);
@@ -197,6 +206,7 @@
         if (y > -10 && y < H) BB.text(l, W / 2, y, { size: 8, align: "center", color: i === 0 ? C.amber : C.white });
       });
       BB.sprite("lion-64", W / 2, Math.max(H - this.t * 18 + this.lines.length * 14 + 20, -70), { anchor: "center" });
+      if (this.real < 6) BB.text("mantén pulsado para acelerar", W - 6, H - 9, { size: 5, align: "right", color: C.lgray });
     }
   }
 

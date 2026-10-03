@@ -30,6 +30,33 @@ const BB = (() => {
   window.addEventListener("resize", resize);
   resize();
 
+  // Teclado virtual (movil): el area visible se encoge y tapa la parte baja del
+  // juego. Mientras esta abierto, el contenedor se ajusta al area visible (el
+  // juego queda centrado en ella) y el campo de respuesta pasa arriba (clase kb).
+  function fitViewport() {
+    const vv = window.visualViewport;
+    const wrap = document.getElementById("wrap");
+    if (!vv || !wrap) return;
+    const kb = vv.height < window.innerHeight - 120;
+    wrap.classList.toggle("kb", kb);
+    if (kb) {
+      Object.assign(wrap.style, {
+        top: vv.offsetTop + "px",
+        left: vv.offsetLeft + "px",
+        right: "auto",
+        bottom: "auto",
+        width: vv.width + "px",
+        height: vv.height + "px",
+      });
+    } else {
+      wrap.style.cssText = "";
+    }
+  }
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", fitViewport);
+    window.visualViewport.addEventListener("scroll", fitViewport);
+  }
+
   // ---------- Imágenes ----------
   const images = {};
   function loadImages(map) {
@@ -52,7 +79,7 @@ const BB = (() => {
   // ---------- Entrada ----------
   const keys = new Set();
   const keysJust = new Set();
-  const pointer = { x: W / 2, y: H / 2, down: false, justDown: false, justUp: false, inside: false, moved: false };
+  const pointer = { x: W / 2, y: H / 2, down: false, justDown: false, justUp: false, inside: false, moved: false, touch: false };
   let anyJust = false; // clic o tecla de avance en este frame
 
   function toLogical(e) {
@@ -68,6 +95,7 @@ const BB = (() => {
     pointer.y = p.y;
     pointer.down = true;
     pointer.justDown = true;
+    pointer.touch = e.pointerType !== "mouse"; // tactil/lapiz: los jefes pueden ser algo mas permisivos
     pointer.inside = true;
     anyJust = true;
     music.resume();

@@ -43,6 +43,17 @@ body {
   border-radius: 0;
 }
 
+/* Teclado virtual abierto: el juego se centra en el area visible y la
+   respuesta va arriba para no tapar la pista */
+#wrap.kb {
+  place-content: center;
+}
+
+#wrap.kb #word {
+  bottom: auto;
+  top: 6px;
+}
+
 #word:focus {
   outline-color: #feae34;
 }

@@ -227,7 +227,7 @@
         if (b.state === "warn") {
           BB.ctx.save();
           BB.ctx.globalAlpha = 0.25 + Math.sin(b.t * 25) * 0.15;
-          BB.rect(b.x - 12, 60, 24, H - 60, C.purple);
+          BB.rect(b.x - 12, 0, 24, H, C.purple);
           BB.ctx.restore();
         } else {
           BB.ctx.save();

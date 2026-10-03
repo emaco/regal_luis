@@ -17,10 +17,12 @@
   class CucarachaScene extends BB.BossScene {
     constructor() {
       super({ name: "CUCARACHA", hp: 5 });
+      // En tactil el toque llega con retardo y es menos preciso: mas margen.
+      this.touch = !!BB.input.pointer.touch;
       this.marker = 0; // 0..1
       this.dir = 1;
-      this.speed = 0.9; // recorrido por segundo
-      this.zoneW = 0.22;
+      this.speed = this.touch ? 0.8 : 0.9; // recorrido por segundo
+      this.zoneW = this.touch ? 0.28 : 0.22;
       this.zoneX = 0.5;
       this.knives = [];
       this.cucaX = W - 70;
@@ -57,8 +59,14 @@
 
       const inp = BB.input;
       if (this.cooldown <= 0 && (inp.pointer.justDown || inp.justPressed("Space") || inp.justPressed("Enter"))) {
-        const inZone = Math.abs(this.marker - this.zoneX) <= this.zoneW / 2;
-        this.cooldown = 0.35;
+        // Lo que viste en pantalla va unos ms por detras del marcador real:
+        // vale cualquier punto que el marcador haya recorrido en ese margen.
+        const lag = this.touch ? 0.1 : 0.06;
+        const seen = BB.clamp(this.marker - this.dir * this.speed * lag, 0, 1);
+        const lo = Math.min(seen, this.marker);
+        const hi = Math.max(seen, this.marker);
+        const inZone = hi >= this.zoneX - this.zoneW / 2 && lo <= this.zoneX + this.zoneW / 2;
+        this.cooldown = 0.25;
         if (inZone) this.good();
         else this.miss();
       }
@@ -80,8 +88,8 @@
       BB.floatText(line, W / 2, 60, C.yellow, 1.8);
       this.hitBoss(1);
       this.cucaX = Math.min(W - 30, this.cucaX + 8);
-      this.speed += 0.28;
-      this.zoneW = Math.max(0.09, this.zoneW - 0.025);
+      this.speed += this.touch ? 0.22 : 0.28;
+      this.zoneW = Math.max(this.touch ? 0.15 : 0.09, this.zoneW - 0.025);
       this.newZone();
     }
 
