@@ -111,6 +111,11 @@
 
     async timeout() {
       if (this.waiting || this.over) return;
+      // Al agotarse el tiempo se comprueba lo que hubiera escrito
+      if (this.normalize(this.input.value)) {
+        this.submit();
+        return;
+      }
       this.waiting = true;
       this.allMadre = false;
       this.showInput(false);
