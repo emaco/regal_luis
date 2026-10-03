@@ -105,6 +105,7 @@
         this.deathT -= dt;
         if (this.deathT <= 0) {
           if (this.finalDeath) {
+            BB.state.flags.cansino = true; // ganas por cansino, no por aguantar
             this.finish(true);
             return;
           }
@@ -288,7 +289,14 @@
     title: "RADAHN",
     subtitle: "Consort of Miquella",
     intro: ["Decides matar el rato con un poco de Elden Ring.", "Me queda nada para pasármelo otra vez..."],
-    win: ["Enemy defeated.", "¡Oh no! ¡Son las 22:45! ¡Correr al Mafioso!"],
+    // Si ganas por acumular muertes, Radahn se rinde por cansancio.
+    get win() {
+      const run = "¡Oh no! ¡Son las 22:45! ¡Correr al Mafioso!";
+      if (BB.state.flags.cansino) {
+        return ["Dormammu, he venido a negociar.", "RADAHN: ¡AGHHHHH!", "Radahn se suicida. Ganas por cansino.", run];
+      }
+      return ["Enemy defeated.", run];
+    },
     lose: ["Esto no debería pasar nunca."],
     make: () => new RadahnScene(),
   };

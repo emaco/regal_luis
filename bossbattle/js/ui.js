@@ -195,11 +195,11 @@
     maxHp: 100,
     hp: 100,
     deaths: 0,
-    flags: { patata: false, meNiego: false, tuMadre: false, tiramisu: false, build: "" },
+    flags: { patata: false, meNiego: false, tuMadre: false, cansino: false, tiramisu: false, build: "" },
     reset() {
       this.hp = this.maxHp;
       this.deaths = 0;
-      this.flags = { patata: false, meNiego: false, tuMadre: false, tiramisu: false, build: "" };
+      this.flags = { patata: false, meNiego: false, tuMadre: false, cansino: false, tiramisu: false, build: "" };
     },
   };
 
