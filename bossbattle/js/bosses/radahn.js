@@ -70,6 +70,10 @@
       this.px = W / 2;
       this.py = H - 40;
       this.shieldCd = 0;
+      // Al reaparecer se restauran las barras: el tiempo de Radahn y tu vida
+      this.bossHp = SURVIVE;
+      this.phase = 1;
+      BB.state.hp = BB.state.maxHp;
     }
 
     die() {
@@ -172,7 +176,11 @@
           BB.sfx.zap();
         }
         if (b.state === "fire") {
-          if (b.t < 0.4 && Math.abs(this.px - b.x) < 14) this.die();
+          // Un rayo solo golpea una vez: si el escudo lo bloquea, ya esta absorbido.
+          if (b.t < 0.4 && !b.hit && Math.abs(this.px - b.x) < 14) {
+            b.hit = true;
+            this.die();
+          }
           if (b.t > 0.5) this.beams.splice(i, 1);
         }
       }
@@ -190,7 +198,10 @@
         s.t += dt;
         if (s.t > 0.8) {
           s.x += s.dir * 300 * dt;
-          if (Math.abs(s.x - this.px) < 16 && Math.abs(s.y - this.py) < 12) this.die();
+          if (!s.hit && Math.abs(s.x - this.px) < 16 && Math.abs(s.y - this.py) < 12) {
+            s.hit = true; // el barrido tambien golpea una sola vez
+            this.die();
+          }
           if (s.x < -60 || s.x > W + 60) this.sweep = null;
         }
       }
