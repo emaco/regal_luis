@@ -39,6 +39,7 @@
       this.speaker = speaker;
       this.choices = options;
       this.choice = 0;
+      this.pressed = false;
       this.active = true;
       return new Promise((r) => (this.resolve = r));
     },
@@ -71,8 +72,13 @@
           BB.sfx.select();
         }
         const hovered = this.choiceAt(inp.pointer.x, inp.pointer.y);
+        // Al pulsar solo se marca la opcion (se puede arrastrar de una a otra);
+        // se elige al soltar sobre una opcion.
+        if (inp.pointer.justDown) this.pressed = hovered !== -1;
         if (hovered !== -1 && inp.pointer.inside && (inp.pointer.moved || inp.pointer.justDown)) this.choice = hovered;
-        if (inp.justPressed("Enter") || inp.justPressed("Space") || (inp.pointer.justDown && hovered !== -1)) {
+        const released = inp.pointer.justUp && this.pressed;
+        if (inp.pointer.justUp) this.pressed = false;
+        if (inp.justPressed("Enter") || inp.justPressed("Space") || (released && hovered !== -1)) {
           BB.sfx.ok();
           this.finish(this.choice);
         }
