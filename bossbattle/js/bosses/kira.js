@@ -15,8 +15,8 @@
       this.lane = 1;
       this.px = LANES[1];
       this.charges = []; // {lane, t, state: 'warn'|'run', y}
-      this.nextT = 1.2;
-      this.interval = 1.7;
+      this.nextT = 1.0;
+      this.interval = 1.4;
       this.hitCd = 0;
       this.weeds = [];
       this.barkT = 0;
@@ -36,8 +36,12 @@
       if (inp.justPressed("ArrowLeft") || inp.justPressed("KeyA")) this.lane = Math.max(0, this.lane - 1);
       if (inp.justPressed("ArrowRight") || inp.justPressed("KeyD")) this.lane = Math.min(2, this.lane + 1);
       if (inp.pointer.justDown) {
-        if (inp.pointer.x < W / 2 - 20) this.lane = Math.max(0, this.lane - 1);
-        else if (inp.pointer.x > W / 2 + 20) this.lane = Math.min(2, this.lane + 1);
+        // Clic/toque: va directo al carril mas cercano al puntero
+        let best = 0;
+        LANES.forEach((lx, i) => {
+          if (Math.abs(inp.pointer.x - lx) < Math.abs(inp.pointer.x - LANES[best])) best = i;
+        });
+        this.lane = best;
       }
       this.px = BB.lerp(this.px, LANES[this.lane], Math.min(1, dt * 14));
 
@@ -53,7 +57,7 @@
       this.nextT -= dt;
       if (this.nextT <= 0) {
         this.nextT = this.interval;
-        this.interval = Math.max(0.75, this.interval - 0.06);
+        this.interval = Math.max(0.62, this.interval - 0.07);
         const n = this.t > 12 && Math.random() < 0.45 ? 2 : 1;
         const lanes = [0, 1, 2].sort(() => Math.random() - 0.5).slice(0, n);
         for (const l of lanes) this.charges.push({ lane: l, t: 0, state: "warn", y: 20 });
@@ -70,7 +74,10 @@
         if (c.state === "run") {
           c.y += 330 * dt;
           const py = H - 30;
-          if (c.lane === this.lane && Math.abs(c.y - py) < 18 && this.hitCd <= 0) {
+          // Solo duele mientras Kira esta encima; en cuanto el jugador queda
+          // detras de ella ya no hay daño. Se usa la posicion visual del jugador.
+          const onLane = Math.abs(this.px - LANES[c.lane]) < 22;
+          if (onLane && c.y > py - 22 && c.y < py + 10 && this.hitCd <= 0) {
             this.hitCd = 0.8;
             this.hurt(20, "¡GUAU!");
           }

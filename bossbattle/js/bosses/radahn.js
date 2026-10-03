@@ -7,6 +7,7 @@
   "use strict";
   const { W, H, C } = BB;
 
+  const DEATH_PAUSE = 3.4; // lo que dura el clip de GameOver
   const DEATHS = {
     escudo: [
       "You died. Volver a intentar",
@@ -45,6 +46,7 @@
       this.nextSweep = 7;
       this.deathT = 0;
       this.deathLine = "";
+      this.drawsGameOver = true; // el clip se pinta en render(), entre el fondo oscuro y el texto
       this.shieldCd = 0;
       this.bossX = W / 2;
       this.phase = 1;
@@ -81,14 +83,15 @@
       }
       BB.state.deaths++;
       BB.sfx.lose();
+      BB.gameOver.play("assets/gameover/gameover.mp4");
       BB.shake(5, 0.5);
       const lines = DEATHS[this.build];
       const n = Math.min(BB.state.deaths, lines.length);
       this.deathLine = lines[n - 1];
-      this.deathT = 2.2;
+      this.deathT = DEATH_PAUSE;
       if (n >= lines.length) {
         // A la enésima muerte el juego original te daba la victoria igual.
-        this.deathT = 2.2;
+        this.deathT = DEATH_PAUSE;
         this.finalDeath = true;
       }
     }
@@ -261,6 +264,7 @@
         BB.ctx.globalAlpha = 0.75;
         BB.rect(0, 0, W, H, C.black);
         BB.ctx.restore();
+        BB.gameOver.draw(BB.ctx, W, H);
         BB.text("YOU DIED", W / 2, H / 2 - 18, { size: 16, align: "center", color: C.darkred });
         BB.wrap(this.deathLine, W - 40, 6).forEach((l, i) => BB.text(l, W / 2, H / 2 + 8 + i * 9, { size: 6, align: "center", color: C.silver }));
       }

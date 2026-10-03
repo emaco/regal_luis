@@ -44,7 +44,7 @@
     calm: "assets/audio/disco-snails.mp3",
     battle: "assets/audio/pumpkin-cowboy.mp3",
   };
-  const ORDER = ["soul", "cucaracha", "masymas", "kira", "radahn"];
+  const ORDER =["soul", "cucaracha", "masymas", "kira", "radahn"];
 
   class Restart extends Error {}
 
@@ -177,7 +177,8 @@
         "",
         "Muertes contra Radahn: " + BB.state.deaths,
         "Amistad cucarachil: " + (BB.state.flags.patata ? "sí" : "no"),
-        "Final verdadero: " + (BB.state.flags.meNiego ? "sí" : "no"),
+        "Final verdadero: " + (BB.state.flags.meNiego ? "sí" : "No (Por mentir)"),
+        "Final secreto: " + (BB.state.flags.tuMadre ? "Tu madre" : "no (falta tu madre)"),
         "",
         "Gracias por conseguir la Bianca.",
         "",
@@ -197,6 +198,60 @@
       });
       BB.sprite("lion-64", W / 2, Math.max(H - this.t * 18 + this.lines.length * 14 + 20, -70), { anchor: "center" });
     }
+  }
+
+  // Final secreto (respondiste "Tu madre" a todo el crucigrama): tras los
+  // creditos, silencio y pantalla negra; un granjero oye musica que va creciendo
+  // y aparece el cartel de la secuela.
+  class SecretScene {
+    constructor() {
+      this.t = 0;
+      this.mt = 0; // tiempo desde que empieza la musica
+      this.pt = 0; // tiempo desde que aparece el cartel
+      this.phase = "dark";
+      this.done = new Promise((r) => (this.resolve = r));
+    }
+    update(dt) {
+      this.t += dt;
+      if (this.phase === "dark") {
+        if (this.t > 2.5) {
+          this.phase = "farmer";
+          BB.music.play(MUSIC.battle, { volume: 0.02 });
+          BB.dialog.say(["¿Qué hay plantado aquí? ¿Y por qué se oye música?"], "GRANJERO").then(() => (this.phase = "poster"));
+        }
+        return;
+      }
+      this.mt += dt;
+      BB.music.el.volume = BB.clamp(0.02 + this.mt * 0.035, 0, 0.8); // sube poco a poco
+      if (this.phase === "farmer") BB.dialog.update(dt);
+      else {
+        this.pt += dt;
+        if (this.pt > 3 && BB.input.advance) this.resolve();
+      }
+    }
+    draw() {
+      BB.rect(0, 0, W, H, C.black);
+      if (this.phase === "farmer") BB.dialog.draw();
+      if (this.phase !== "poster") return;
+      BB.ctx.save();
+      BB.ctx.globalAlpha = BB.clamp(this.pt / 1.5, 0, 1);
+      BB.text("Pumpkin Cowboy regresará...", W / 2, 26, { size: 10, align: "center", color: C.amber, shadow: C.darkred });
+      BB.sprite("pumpkin-96", W / 2, H / 2, { anchor: "center" });
+      BB.text("...en 2027.", W / 2, H - 56, { size: 12, align: "center", color: C.white, shadow: C.black });
+      BB.text("Pumpkin Cowboy: Orígenes", W / 2, H - 36, { size: 8, align: "center", color: C.amber, shadow: C.black });
+      BB.ctx.restore();
+      if (this.pt > 3 && Math.floor(this.pt * 2) % 2 === 0) {
+        BB.text("toca para volver al título", W / 2, H - 14, { size: 5, align: "center", color: C.lgray });
+      }
+    }
+  }
+
+  async function secretEnding() {
+    BB.music.stop();
+    const s = new SecretScene();
+    BB.setScene(s);
+    await s.done;
+    BB.music.stop();
   }
 
   // ---------- Flujo ----------
@@ -227,9 +282,10 @@
         }
         return;
       }
-      BB.music.stop();
+      BB.gameOver.play("assets/gameover/gameover.mp4"); // la musica sigue sonando
       await BB.dialog.say(def.lose);
       const i = await BB.dialog.ask("GAME OVER", ["Volver a intentar", "Rendirse"]);
+      BB.gameOver.stop();
       if (i === 1) throw new Restart();
       BB.state.hp = BB.state.maxHp;
     }
@@ -257,6 +313,7 @@
     BB.music.play(MUSIC.battle, { volume: 0.6 }); // pumpkin cowboy en los créditos
     BB.setScene(c);
     await c.done;
+    if (BB.state.flags.tuMadre) await secretEnding();
   }
 
   async function game() {

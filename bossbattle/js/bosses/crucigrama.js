@@ -35,6 +35,7 @@
       this.feedbackT = 0;
       this.waiting = false;
       this.gridSeed = Math.random() * 100;
+      this.allMadre = true; // true mientras TODAS las respuestas sean "Tu madre"
     }
 
     async start() {
@@ -85,13 +86,20 @@
       if (!guess) return;
       this.waiting = true;
       this.showInput(false);
-      if (guess === this.current.answer) {
+      if (guess === "TUMADRE") {
+        this.feedback = "¡Es muy efectivo!";
+        this.feedbackT = 1.2;
+        BB.flash(C.white, 0.15);
+        this.hitBoss(3, "¡Es muy efectivo!"); // "Tu madre" pega mas que una respuesta normal
+      } else if (guess === this.current.answer) {
+        this.allMadre = false;
         this.solved.push(this.current.answer);
         this.feedback = "¡" + this.current.answer + "!";
         this.feedbackT = 1.2;
         BB.flash(C.white, 0.15);
         this.hitBoss(1, "casilla rellena");
       } else {
+        this.allMadre = false;
         this.feedback = "Era " + this.current.answer;
         this.feedbackT = 1.6;
         this.hurt(15, "-15 casilla negra");
@@ -104,6 +112,7 @@
     async timeout() {
       if (this.waiting || this.over) return;
       this.waiting = true;
+      this.allMadre = false;
       this.showInput(false);
       this.feedback = "Tiempo. Era " + this.current.answer;
       this.feedbackT = 1.6;
@@ -124,6 +133,7 @@
     }
 
     async finish(win) {
+      if (win && this.allMadre) BB.state.flags.tuMadre = true; // final secreto
       this.showInput(false);
       super.finish(win);
     }
@@ -183,7 +193,13 @@
     subtitle: "nunca debiste negarte",
     hidden: true,
     intro: ["Corres hacia el Mafioso. La calle se dobla.", "Las baldosas se vuelven blancas y negras. Cuadradas. Numeradas."],
-    win: ["El crucigrama se queda sin casillas.", "Se rinde. 'Vale. Aprobado de verdad. 10 puntos para Gryffindor.'"],
+    // Con el final secreto (todo "Tu madre") el crucigrama reacciona distinto.
+    get win() {
+      if (BB.state.flags.tuMadre) {
+        return ["Imposible... ¿¡cómo conoces las palabras de la lengua antigua!? Tú ganas... ¡Un gritón de puntos para Gryffindor!"];
+      }
+      return ["El crucigrama se queda sin casillas.", "Se rinde. 'Vale. Aprobado de verdad. 10 puntos para Gryffindor.'"];
+    },
     lose: ["Quedas perdido en el tiempo y el espacio. Tu Bianca se la comen otros."],
     make: () => new CrucigramaScene(),
   };

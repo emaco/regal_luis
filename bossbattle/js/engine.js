@@ -203,6 +203,77 @@ const BB = (() => {
   };
   music.el.preload = "auto";
 
+  // GameOver: si existe assets/gameover/gameover.mp4 se pinta semitransparente
+  // cruzando la pantalla (por detras de la interfaz) y su audio suena junto a la
+  // musica. Si no existe, un cartel "GAME OVER" con un acorde sintetizado.
+  const gameOver = {
+    DUR: 4,
+    start: 0,
+    playing: false,
+    video: null,
+    play(url) {
+      this.stop();
+      this.start = performance.now();
+      this.playing = true;
+      const v = document.createElement("video");
+      v.src = url;
+      v.volume = 0.8;
+      v.muted = music.muted;
+      v.playsInline = true;
+      v.onerror = () => {
+        if (this.video !== v) return;
+        this.video = null; // sin clip: cartel + sonido sintetizado
+        this.synth();
+      };
+      v.onended = () => (this.playing = false);
+      this.video = v;
+      v.play().catch(() => {});
+    },
+    synth() {
+      tone({ freq: 110, dur: 3.5, type: "sawtooth", slide: -45, vol: 0.07 });
+      tone({ freq: 164, dur: 3.5, type: "triangle", slide: -60, vol: 0.07 });
+      tone({ freq: 55, dur: 3.8, type: "square", slide: -15, vol: 0.05, delay: 0.1 });
+      tone({ freq: 880, dur: 0.6, type: "sine", slide: -600, vol: 0.05 });
+    },
+    stop() {
+      if (this.video) this.video.pause();
+      this.video = null;
+      this.playing = false;
+    },
+    draw(ctx, W, H) {
+      if (!this.playing) return;
+      const v = this.video;
+      if (v) {
+        if (v.readyState < 2) return;
+        v.muted = music.muted;
+        const k = Math.min(1, v.currentTime / (v.duration || this.DUR));
+        const h = Math.round(H * 0.6);
+        const w = Math.round(h * ((v.videoWidth || 16) / (v.videoHeight || 9)));
+        ctx.save();
+        ctx.globalAlpha = 0.45 * Math.min(1, k * 8, (1 - k) * 8);
+        ctx.drawImage(v, Math.round(-w + (W + w) * k), Math.round((H - h) / 2), w, h);
+        ctx.restore();
+        return;
+      }
+      const k = (performance.now() - this.start) / 1000 / this.DUR;
+      if (k >= 1) {
+        this.playing = false;
+        return;
+      }
+      const fade = Math.min(1, k * 6, (1 - k) * 4);
+      const bandH = 56;
+      const y = Math.round((H - bandH) / 2);
+      ctx.save();
+      ctx.globalAlpha = 0.55 * fade;
+      rect(0, y, W, bandH, C.black);
+      rect(0, y, W, 2, C.darkred);
+      rect(0, y + bandH - 2, W, 2, C.darkred);
+      ctx.globalAlpha = 0.6 * fade;
+      text("GAME OVER", -90 + (W + 180) * k, y + 18, { size: 20, align: "center", color: C.red, shadow: C.black });
+      ctx.restore();
+    },
+  };
+
   // ---------- Dibujo ----------
   const C = {
     black: "#181425",
@@ -380,7 +451,7 @@ const BB = (() => {
 
   return {
     W, H, C, ctx, canvas, FONT,
-    loadImages, img, input, sfx, music,
+    loadImages, img, input, sfx, music, gameOver,
     rect, sprite, frame, text, measure, wrap, hpBar, shake, flash,
     rand, randInt, pick, clamp, lerp, dist, wait,
     setScene, start,

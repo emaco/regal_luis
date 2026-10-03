@@ -12,7 +12,7 @@
       this.px = W / 2;
       this.items = [];
       this.spawnT = 0;
-      this.spawnEvery = 0.9;
+      this.spawnEvery = 0.55;
       this.fall = 55;
       this.price = 1.2;
       this.flicker = 0;
@@ -93,7 +93,7 @@
       BB.floatText(this.price.toFixed(2) + "€", it.x, it.y - 10, C.yellow);
       this.hitBoss(1);
       this.fall += 4;
-      this.spawnEvery = Math.max(0.42, this.spawnEvery - 0.045);
+      this.spawnEvery = Math.max(0.28, this.spawnEvery - 0.03);
       if (this.bossHp === 5) BB.dialog.say(["Megafonía: 'Los precios han subido mientras leías esto.'"], "MASYMAS");
     }
 

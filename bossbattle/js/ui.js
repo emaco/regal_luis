@@ -168,11 +168,11 @@
     maxHp: 100,
     hp: 100,
     deaths: 0,
-    flags: { patata: false, meNiego: false, tiramisu: false, build: "" },
+    flags: { patata: false, meNiego: false, tuMadre: false, tiramisu: false, build: "" },
     reset() {
       this.hp = this.maxHp;
       this.deaths = 0;
-      this.flags = { patata: false, meNiego: false, tiramisu: false, build: "" };
+      this.flags = { patata: false, meNiego: false, tuMadre: false, tiramisu: false, build: "" };
     },
   };
 
@@ -213,6 +213,7 @@
       if (this.bg) BB.sprite(this.bg, 0, 0, { scale: 2 });
       this.render();
       drawFloaters();
+      if (!this.drawsGameOver) BB.gameOver.draw(BB.ctx, W, H); // por detras de la interfaz
       this.drawHud();
       dialog.draw();
     }
