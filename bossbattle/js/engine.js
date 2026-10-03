@@ -26,17 +26,14 @@ const BB = (() => {
     if (scale >= 2) scale = Math.floor(scale); // escala entera cuando cabe
     canvas.style.width = Math.floor(W * scale) + "px";
     canvas.style.height = Math.floor(H * scale) + "px";
-    if (document.getElementById("wrap").classList.contains("kb")) fitViewport();
   }
   window.addEventListener("resize", resize);
   resize();
 
   // Teclado virtual (movil): el area visible se encoge y tapa la parte baja del
-  // juego. Mientras esta abierto, el contenedor se ajusta al area visible, el
-  // campo de respuesta pasa arriba (clase kb) y el juego se coloca justo debajo
-  // de el, de modo que se vea la franja de la pista (y 90..164 del juego).
-  const KB_Y0 = 90;
-  const KB_ROWS = 74;
+  // juego. Mientras esta abierto, el contenedor se ajusta al area visible (el
+  // juego queda centrado en ella) y el campo de respuesta pasa arriba con la
+  // pista como texto justo debajo (clase kb, ver style.css).
   function fitViewport() {
     const vv = window.visualViewport;
     const wrap = document.getElementById("wrap");
@@ -52,18 +49,8 @@ const BB = (() => {
         width: vv.width + "px",
         height: vv.height + "px",
       });
-      const word = document.getElementById("word");
-      const below = word && !word.hidden ? word.getBoundingClientRect().bottom - wrap.getBoundingClientRect().top : 0;
-      const top = below + 6;
-      let scale = Math.min(window.innerWidth / W, window.innerHeight / H, (vv.height - top - 4) / KB_ROWS);
-      scale = Math.max(scale, 0.5);
-      canvas.style.width = Math.floor(W * scale) + "px";
-      canvas.style.height = Math.floor(H * scale) + "px";
-      Object.assign(canvas.style, { position: "absolute", left: "50%", transform: "translateX(-50%)", top: Math.round(top - KB_Y0 * scale) + "px" });
     } else {
       wrap.style.cssText = "";
-      Object.assign(canvas.style, { position: "", left: "", transform: "", top: "" });
-      resize();
     }
   }
   if (window.visualViewport) {

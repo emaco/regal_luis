@@ -31,6 +31,8 @@
       this.timer = 0;
       this.solved = [];
       this.input = document.getElementById("word");
+      this.clueText = document.getElementById("clueText"); // la pista tambien va en HTML (movil con teclado)
+      this.clueBar = document.querySelector("#clueBar i");
       this.feedback = "";
       this.feedbackT = 0;
       this.waiting = false;
@@ -50,6 +52,7 @@
       if (this.pool.length === 0) this.pool = CLUES.slice().sort(() => Math.random() - 0.5);
       this.current = this.pool.pop();
       this.timer = TIME;
+      if (this.clueText) this.clueText.textContent = this.current.clue;
       this.showInput(true);
     }
 
@@ -131,6 +134,7 @@
       if (this.feedbackT > 0) this.feedbackT -= dt;
       if (!this.current || this.waiting) return;
       this.timer -= dt;
+      if (this.clueBar) this.clueBar.style.width = BB.clamp(this.timer / TIME, 0, 1) * 100 + "%";
       if (this.timer < 5 && Math.floor(this.timer * 2) !== Math.floor((this.timer + dt) * 2)) BB.sfx.tick();
       if (this.timer <= 0) this.timeout();
       // En móvil el teclado puede quitar el foco al input: lo recuperamos al tocar

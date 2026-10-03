@@ -26,12 +26,18 @@ body {
   touch-action: none;
 }
 
-#word {
+#ask {
   position: absolute;
   left: 50%;
   bottom: 12%;
   transform: translateX(-50%);
   width: min(70vw, 420px);
+}
+
+#word {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
   padding: 10px 12px;
   font: 14px "Press Start 2P", monospace;
   text-transform: uppercase;
@@ -43,15 +49,45 @@ body {
   border-radius: 0;
 }
 
-/* Teclado virtual abierto: el juego se centra en el area visible y la
-   respuesta va arriba para no tapar la pista */
+/* Teclado virtual abierto: el area visible es pequena, asi que el campo de
+   respuesta va arriba y la pista se muestra como texto justo debajo de el */
 #wrap.kb {
   place-content: center;
 }
 
-#wrap.kb #word {
+#wrap.kb #ask {
   bottom: auto;
   top: 6px;
+  width: min(92vw, 560px);
+}
+
+#clue {
+  display: none;
+  margin-top: 10px;
+  padding: 8px 10px;
+  font: 9px/1.6 "Press Start 2P", monospace;
+  color: #181425;
+  background: #fff;
+  border: 3px solid #181425;
+  outline: 3px solid #fff;
+  pointer-events: none;
+}
+
+#wrap.kb #word:not([hidden]) ~ #clue {
+  display: block;
+}
+
+#clueBar {
+  height: 4px;
+  margin-top: 8px;
+  background: #c0cbdc;
+}
+
+#clueBar i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: #63c74d;
 }
 
 #word:focus {
