@@ -28,6 +28,7 @@
       this.cucaX = W - 70;
       this.round = 0;
       this.cooldown = 0;
+      this.knifeCd = 0; // tiempo hasta que la cucaracha puede lanzar otro cuchillo
       this.lamp = 0;
     }
 
@@ -56,6 +57,7 @@
         this.dir = 1;
       }
       if (this.cooldown > 0) this.cooldown -= dt;
+      if (this.knifeCd > 0) this.knifeCd -= dt;
 
       const inp = BB.input;
       if (this.cooldown <= 0 && (inp.pointer.justDown || inp.justPressed("Space") || inp.justPressed("Enter"))) {
@@ -73,7 +75,7 @@
 
       for (let i = this.knives.length - 1; i >= 0; i--) {
         const k = this.knives[i];
-        k.x -= 260 * dt;
+        k.x -= (this.touch ? 210 : 260) * dt;
         k.y += k.vy * dt;
         if (k.x < 40) {
           this.knives.splice(i, 1);
@@ -96,7 +98,10 @@
     miss() {
       BB.sfx.bad();
       BB.floatText("...", this.cucaX, 120, C.white);
-      this.knives.push({ x: this.cucaX - 10, y: 130, vy: BB.rand(-10, 10) });
+      if (this.knifeCd <= 0) {
+        this.knifeCd = 0.6; // no lanza otro cuchillo hasta pasados 0.6 s
+        this.knives.push({ x: this.cucaX - 10, y: 130, vy: BB.rand(-10, 10) });
+      }
       this.cucaX = Math.max(W - 110, this.cucaX - 6);
     }
 
