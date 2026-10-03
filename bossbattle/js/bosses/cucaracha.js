@@ -14,6 +14,11 @@
     "Yo creo que van a pelear con cuchillos.",
   ];
 
+  // Dano de cada cuchillo: los que sueltan los extremos de la barra son muchos y no
+  // se pueden esquivar, asi que hacen poco; el de fallar sigue doliendo mas.
+  const KNIFE_MISS = 12;
+  const KNIFE_EDGE = 6;
+
   class CucarachaScene extends BB.BossScene {
     constructor() {
       super({ name: "CUCARACHA", hp: 5 });
@@ -21,7 +26,7 @@
       this.touch = !!BB.input.pointer.touch;
       this.marker = 0; // 0..1
       this.dir = 1;
-      this.speed = this.touch ? 0.8 : 0.9; // recorrido por segundo
+      this.speed = this.touch ? 1.05 : 1.2; // recorrido por segundo
       this.zoneW = this.touch ? 0.28 : 0.22;
       this.zoneX = 0.5;
       this.knives = [];
@@ -50,10 +55,12 @@
       if (this.marker > 1) {
         this.marker = 1;
         this.dir = -1;
+        this.throwKnife(KNIFE_EDGE); // al llegar a un lado tambien te tira un cuchillo
       }
       if (this.marker < 0) {
         this.marker = 0;
         this.dir = 1;
+        this.throwKnife(KNIFE_EDGE);
       }
       if (this.cooldown > 0) this.cooldown -= dt;
 
@@ -77,9 +84,13 @@
         k.y += k.vy * dt;
         if (k.x < 40) {
           this.knives.splice(i, 1);
-          this.hurt(15, "-15");
+          this.hurt(k.dmg, "-" + k.dmg);
         }
       }
+    }
+
+    throwKnife(dmg) {
+      this.knives.push({ x: this.cucaX - 10, y: 130, vy: BB.rand(-10, 10), dmg });
     }
 
     good() {
@@ -88,7 +99,7 @@
       BB.floatText(line, W / 2, 60, C.yellow, 1.8);
       this.hitBoss(1);
       this.cucaX = Math.min(W - 30, this.cucaX + 8);
-      this.speed += this.touch ? 0.22 : 0.28;
+      this.speed += this.touch ? 0.28 : 0.35;
       this.zoneW = Math.max(this.touch ? 0.15 : 0.09, this.zoneW - 0.025);
       this.newZone();
     }
@@ -96,7 +107,7 @@
     miss() {
       BB.sfx.bad();
       BB.floatText("...", this.cucaX, 120, C.white);
-      this.knives.push({ x: this.cucaX - 10, y: 130, vy: BB.rand(-10, 10) });
+      this.throwKnife(KNIFE_MISS);
       this.cucaX = Math.max(W - 110, this.cucaX - 6);
     }
 
