@@ -40,6 +40,8 @@
       this.choices = options;
       this.choice = 0;
       this.pressed = false;
+      this.pressT = 0;
+      this.armed = -1;
       this.active = true;
       return new Promise((r) => (this.resolve = r));
     },
@@ -72,13 +74,29 @@
           BB.sfx.select();
         }
         const hovered = this.choiceAt(inp.pointer.x, inp.pointer.y);
-        // Al pulsar solo se marca la opcion (se puede arrastrar de una a otra);
-        // se elige al soltar sobre una opcion.
-        if (inp.pointer.justDown) this.pressed = hovered !== -1;
-        if (hovered !== -1 && inp.pointer.inside && (inp.pointer.moved || inp.pointer.justDown)) this.choice = hovered;
-        const released = inp.pointer.justUp && this.pressed;
-        if (inp.pointer.justUp) this.pressed = false;
-        if (inp.justPressed("Enter") || inp.justPressed("Space") || (released && hovered !== -1)) {
+        const ptr = inp.pointer;
+        // Pulsar marca la opcion (y se puede arrastrar de una a otra). Se elige al
+        // soltar sobre una opcion; vale tambien si el dedo ya estaba apoyado y se
+        // desliza hasta una.
+        const touching = ptr.down || ptr.justDown;
+        if (touching && hovered !== -1) {
+          if (!this.pressed) this.pressT = 0;
+          this.pressed = true;
+        }
+        if (this.pressed && touching) this.pressT += dt;
+        if (hovered !== -1 && ptr.inside && (ptr.moved || ptr.justDown)) this.choice = hovered;
+        let confirm = inp.justPressed("Enter") || inp.justPressed("Space");
+        if (ptr.justUp) {
+          if (this.pressed && hovered !== -1) {
+            // Con raton se elige al soltar. En tactil, un toque rapido solo marca la
+            // opcion: otro toque sobre la misma (o mantener pulsado y soltar) la elige.
+            if (!ptr.touch || hovered === this.armed || this.pressT > 0.3) confirm = true;
+            else this.armed = hovered;
+          }
+          this.pressed = false;
+          this.pressT = 0;
+        }
+        if (confirm) {
           BB.sfx.ok();
           this.finish(this.choice);
         }
@@ -143,7 +161,10 @@
         BB.frame(b.x, b.y, b.w, b.h);
         this.choices.forEach((opt, i) => {
           const yy = b.y + 6 + i * 14;
-          if (i === this.choice) BB.text(">", b.x + 8, yy);
+          if (i === this.choice) {
+            BB.rect(b.x + 4, yy - 3, b.w - 8, 13, C.yellow); // opcion marcada
+            BB.text(">", b.x + 8, yy);
+          }
           BB.text(opt, b.x + 20, yy, { size: 8 });
         });
       }
