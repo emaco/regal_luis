@@ -90,6 +90,10 @@ body {
   background: #63c74d;
 }
 
+#word[hidden] {
+  display: none;
+}
+
 #word:focus {
   outline-color: #feae34;
 }
