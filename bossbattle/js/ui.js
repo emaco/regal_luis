@@ -229,8 +229,11 @@
 
     update(dt) {
       updateFloaters(dt);
+      // El toque que cierra un dialogo no debe contar como input del combate en ese
+      // mismo fotograma (sino la cucaracha te tira un cuchillo nada mas empezar).
+      const wasTalking = dialog.active;
       dialog.update(dt);
-      if (dialog.active || this.over) return;
+      if (wasTalking || dialog.active || this.over) return;
       this.t += dt;
       if (this.flashHurt > 0) this.flashHurt -= dt;
       this.tick(dt);
